@@ -1,3 +1,7 @@
 upload:
     path: /upload
     controller: App\Controller\FileController::uploadFile
+
+download:
+    path: /download/{token}
+    controller: App\Controller\FileController::downloadFile

@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 
 class FileController extends Controller
@@ -19,29 +20,42 @@ class FileController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $uploadedFile = $file->getFile();
 
-            $array = explode('.', $uploadedFile->getClientOriginalName());
-            $fileExtension = end($array); //TODO: change, because of problems with extensions like .tar.gz
+            $file->setTitle($file->getFile()->getClientOriginalName());
+
+            $fileExtension = implode('.', array_slice(explode('.', $file->getFile()->getClientOriginalName()), 1));
             $filename = $file->getToken() . '.' . $fileExtension;
-            
+            $file->setPath($filename);
 
-            $uploadedFile->move(
+            $file->getFile()->move(
                 $this->getParameter('files_directory'),
                 $filename
             );
 
-
-            $file->setPath($filename);
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($file);
+            $entityManager->flush();
 
 
             return new Response('Uploaded');
-
-            //return new Response(var_export($file, true) . '<br>' . var_export($_FILES, true));
         }
 
         return $this->render('File/upload.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    public function downloadFile($token)
+    {
+        $file = $this->getDoctrine()
+            ->getRepository(File::class)
+            ->findOneBy(['token' => $token]);
+
+        if (!$file) {
+            throw $this->createNotFoundException('File ' . $token . ' not exist.');
+        }
+
+        $fullPath = $this->getParameter('files_directory') . '/' . $file->getPath();
+        return $this->file($fullPath, $file->getTitle(), ResponseHeaderBag::DISPOSITION_INLINE);
     }
 }
