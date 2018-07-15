@@ -20,7 +20,6 @@ class FileController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $file->setTitle($file->getFile()->getClientOriginalName());
 
             $fileExtension = implode('.', array_slice(explode('.', $file->getFile()->getClientOriginalName()), 1));
@@ -37,7 +36,7 @@ class FileController extends Controller
             $entityManager->flush();
 
 
-            return new Response('Uploaded');
+            return $this->redirectToRoute('download', ['token' => $file->getToken()]);
         }
 
         return $this->render('File/upload.html.twig', [
