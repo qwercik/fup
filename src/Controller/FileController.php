@@ -22,6 +22,7 @@ class FileController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $file->setTitle($file->getFile()->getClientOriginalName());
 
+            // Prepare file name
             $fileExtension = implode('.', array_slice(explode('.', $file->getFile()->getClientOriginalName()), 1));
             $filename = $file->getToken() . '.' . $fileExtension;
             $file->setPath($filename);
@@ -31,6 +32,7 @@ class FileController extends Controller
                 $filename
             );
 
+            //Save object to database
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($file);
             $entityManager->flush();
