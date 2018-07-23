@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  * @ORM\Entity(repositoryClass="App\Repository\FileRepository")
  * @ORM\Table(name="files")
  */
-class File
+class File implements \JsonSerializable
 {
     /**
      * @ORM\Id()
@@ -109,5 +109,15 @@ class File
         $this->file = $file;
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'title' => $this->title,
+            'token' => $this->token,
+            'path' => $this->path,
+            'date' => $this->date
+        ];
     }
 }

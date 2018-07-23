@@ -1,7 +1,19 @@
-upload:
-    path: /upload
-    controller: App\Controller\FileController::uploadFile
+api_files_show_all:
+    path: /api/files
+    controller: App\Controller\FileController::showAll
+    methods: [GET]
 
-download:
-    path: /download/{token}
-    controller: App\Controller\FileController::downloadFile
+api_files_show_one:
+    path: /api/files/{token}
+    controller: App\Controller\FileController::showOne
+    methods: [GET]
+
+api_files_download:
+    path: /api/files/{token}/download
+    controller: App\Controller\FileController::download
+    methods: [GET]
+
+api_files_upload:
+    path: /api/files
+    controller: App\Controller\FileController::upload
+    methods: [POST]

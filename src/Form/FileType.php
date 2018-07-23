@@ -15,7 +15,6 @@ class FileType extends AbstractType
     {
         $builder
             ->add('file', SfFileType::class, ['label' => 'File'])
-            ->add('upload', SubmitType::class, ['label' => 'Upload'])
         ;
     }
 }
